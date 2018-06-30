@@ -66,7 +66,18 @@ function checkForDuplicates(files) {
 }
 
 (async () => {
-    let files = await getAllFilesInDirectory('O:\\tmpinst\\');
-    let duplicates = checkForDuplicates(files);
-    console.log(duplicates);
+    let args = process.argv.slice(2);
+
+    let targetFolder = args[0];
+
+    if (targetFolder !== undefined) {
+        let files = await getAllFilesInDirectory(targetFolder);
+        let duplicates = checkForDuplicates(files);
+        
+        duplicates.map(d => {
+            console.log(d);
+        });
+    } else {
+        console.log('No folder specified.');
+    }
 })();
