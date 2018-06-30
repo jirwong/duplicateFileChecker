@@ -26,8 +26,7 @@ function readFile(targetFile) {
     });
 }
 
-async function getAllFilesInDirectory() {
-    let folderpath = 'O:\\tmpinst\\';
+async function getAllFilesInDirectory(folderpath) {
     let fileList = await readRecursive(folderpath);
     let files = await Promise.all(
         fileList.map(async f => {
@@ -67,19 +66,7 @@ function checkForDuplicates(files) {
 }
 
 (async () => {
-    let files = await getAllFilesInDirectory();
+    let files = await getAllFilesInDirectory('O:\\tmpinst\\');
     let duplicates = checkForDuplicates(files);
     console.log(duplicates);
 })();
-
-/*rec(folderpath, (err, files) => {
-    for (let f of files) {
-        fs.stat(files[0], (err, stat) => {
-            allFiles.push({
-                fullpath : f,
-                filename : path.basename(f),
-                size: stat.size
-            });
-        });
-    }
-});*/
