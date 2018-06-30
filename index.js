@@ -27,13 +27,14 @@ function readFile(targetFile) {
 }
 
 async function getAllFilesInDirectory(folderpath) {
+    //console.log('reading from folderpath : ', folderpath);
     let fileList = await readRecursive(folderpath);
+    //console.log('read recursively - ' + fileList.length);
+
     let files = await Promise.all(
         fileList.map(async f => {
             let fStat = await readFile(f);
-
-            // console.log(fStat);
-
+            //console.log(fStat);
             return {
                 filepath: f,
                 filename: path.basename(f),
@@ -48,6 +49,8 @@ async function getAllFilesInDirectory(folderpath) {
 
 function checkForDuplicates(files) {
     let duplicatedFiles = [];
+
+    //console.log('checking for duplicates...');
 
     files.map(file => {
         let filteredList = files.filter(f => f.filepath !== file.filepath);
@@ -69,14 +72,22 @@ function checkForDuplicates(files) {
     let args = process.argv.slice(2);
 
     let targetFolder = args[0];
+    let targetOutputFile = args[1] !== undefined ? args[1] : 'duplicate.out';
+
+    console.log('writing results to target file - ' + targetOutputFile);
 
     if (targetFolder !== undefined) {
         let files = await getAllFilesInDirectory(targetFolder);
         let duplicates = checkForDuplicates(files);
-        
-        duplicates.map(d => {
+
+        let results = { total: duplicates.length, duplicates };
+
+        fs.writeFileSync(targetOutputFile, JSON.stringify(results));
+
+        /*duplicates.map(d => {
             console.log(d);
-        });
+        });*/
+
     } else {
         console.log('No folder specified.');
     }
