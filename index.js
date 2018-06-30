@@ -72,22 +72,25 @@ function checkForDuplicates(files) {
     let args = process.argv.slice(2);
 
     let targetFolder = args[0];
-    let targetOutputFile = args[1] !== undefined ? args[1] : 'duplicate.out';
+    let targetOutputFile = args[1] !== undefined ? args[1] : 'duplicate.out.json';
 
     console.log('writing results to target file - ' + targetOutputFile);
 
     if (targetFolder !== undefined) {
         let files = await getAllFilesInDirectory(targetFolder);
         let duplicates = checkForDuplicates(files);
+        let usedSpace = duplicates.reduce((acc, v) => {
+            acc += v[0].size;
+            return acc;
+        }, 0);
 
-        let results = { total: duplicates.length, duplicates };
+        let results = { total: duplicates.length, usedSpace, duplicates };
 
         fs.writeFileSync(targetOutputFile, JSON.stringify(results));
 
         /*duplicates.map(d => {
             console.log(d);
         });*/
-
     } else {
         console.log('No folder specified.');
     }
